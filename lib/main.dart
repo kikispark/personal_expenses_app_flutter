@@ -30,6 +30,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSwatch(
           primarySwatch: Colors.purple,
           accentColor: Colors.amber,
+          errorColor: Colors.red,
         ),
         useMaterial3: true,
         appBarTheme: AppBarTheme(
@@ -76,13 +77,17 @@ class _MyHomePageState extends State<MyHomePage> {
 
   // ===>_recentTransactions contains only the transactions from the last 7 days.
 
-  void _addNewTransaction(String txTitle, double txAmount) {
+  void _addNewTransaction(
+    String txTitle,
+    double txAmount,
+    DateTime chosenDate,
+  ) {
     final newTx = Transaction(
       title: txTitle,
       amount: txAmount,
-      date: DateTime.now(),
+      date: chosenDate,
       id: DateTime.now().toString(),
-    );
+    ); // <== named parameter
 
     setState(() {
       _userTransactions.add(newTx);
@@ -99,6 +104,12 @@ class _MyHomePageState extends State<MyHomePage> {
   }
   //here" NewTransaction(_addNewTransaction);"" you are not calling _addNewTransaction.
   // Instead, you are passing a reference to the function into the NewTransaction widget.
+
+  void _deleteTransaction(String id) {
+    setState(() {
+      _userTransactions.removeWhere((trans) => trans.id == id);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,7 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Chart(_recentTransactions),
-            TransactionList(_userTransactions),
+            TransactionList(_userTransactions, _deleteTransaction),
           ],
         ),
       ),

@@ -17,16 +17,19 @@ class _NewTransactionState extends State<NewTransaction> {
   DateTime? _selectedDate;
 
   void _submitData() {
+    if (_amountController.text.isEmpty) {
+      return; // If the amount field is empty, do nothing
+    }
     final enteredTitle = _titleController.text;
     final enteredAmount = double.parse(_amountController.text);
-    if (enteredTitle.isEmpty || enteredAmount <= 0) {
+    if (enteredTitle.isEmpty || enteredAmount <= 0 || _selectedDate == null) {
       return;
     }
     // MyHomePage passes _addNewTransaction into NewTransaction.
     // NewTransaction stores it in widget.addTx.
     // When the user submits, widget.addTx(enteredTitle, enteredAmount) runs → which is really _addNewTransaction(enteredTitle, enteredAmount)
     // The widget that receives it decides when and with what values to actually call it.
-    widget.addTx(enteredTitle, enteredAmount);
+    widget.addTx(enteredTitle, enteredAmount, _selectedDate!);
     Navigator.of(context).pop();
   }
 
