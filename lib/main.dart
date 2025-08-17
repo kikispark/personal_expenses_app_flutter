@@ -4,6 +4,7 @@ import '../models/transaction.dart';
 import '/widgets/new_transaction.dart';
 
 import 'package:flutter/material.dart';
+import './widgets/chart.dart';
 
 void main() => runApp(MyApp());
 
@@ -19,6 +20,10 @@ class MyApp extends StatelessWidget {
           titleLarge: TextStyle(
             fontFamily: 'OpenSans',
             fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+          labelLarge: TextStyle(
+            color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -49,19 +54,27 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final List<Transaction> _userTransactions = [
-    Transaction(
-      id: 't1',
-      title: 'New Shoes',
-      amount: 69.99,
-      date: DateTime.now(),
-    ),
-    Transaction(
-      id: 't2',
-      title: 'Weekly Groceries',
-      amount: 16.53,
-      date: DateTime.now(),
-    ),
+    // Transaction(
+    //   id: 't1',
+    //   title: 'New Shoes',
+    //   amount: 69.99,
+    //   date: DateTime.now(),
+    // ),
+    // Transaction(
+    //   id: 't2',
+    //   title: 'Weekly Groceries',
+    //   amount: 16.53,
+    //   date: DateTime.now(),
+    // ),
   ];
+
+  List<Transaction> get _recentTransactions {
+    return _userTransactions.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
+    }).toList();
+  }
+
+  // ===>_recentTransactions contains only the transactions from the last 7 days.
 
   void _addNewTransaction(String txTitle, double txAmount) {
     final newTx = Transaction(
@@ -84,9 +97,13 @@ class _MyHomePageState extends State<MyHomePage> {
       },
     );
   }
+  //here" NewTransaction(_addNewTransaction);"" you are not calling _addNewTransaction.
+  // Instead, you are passing a reference to the function into the NewTransaction widget.
 
   @override
   Widget build(BuildContext context) {
+    // print('recent: $_recentTransactions');
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Personal Expenses'),
@@ -105,14 +122,7 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Container(
-              width: double.infinity,
-              child: Card(
-                color: Colors.blue,
-                elevation: 5,
-                child: Text('CHART!'),
-              ),
-            ),
+            Chart(_recentTransactions),
             TransactionList(_userTransactions),
           ],
         ),
