@@ -1,13 +1,23 @@
 import '/widgets/transaction_list.dart';
-
+import 'package:flutter/services.dart';
 import '../models/transaction.dart';
 import '/widgets/new_transaction.dart';
 
 import 'package:flutter/material.dart';
 import './widgets/chart.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
+  //=====>This **locks the device orientation** of your app.
+  runApp(MyApp());
+}
 
+// Lift state up:
+// You move the shared state to the closest common parent:
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
@@ -69,6 +79,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
   ];
 
+  bool _showChart = false;
+
   List<Transaction> get _recentTransactions {
     return _userTransactions.where((tx) {
       return tx.date.isAfter(DateTime.now().subtract(Duration(days: 7)));
@@ -114,27 +126,80 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     // print('recent: $_recentTransactions');
+    final isLandscape =
+        MediaQuery.of(context).orientation ==
+        Orientation.landscape; //<===check the orientation of the device
+    //we use final because it calculated for every build run when flutter rebuilds UI
 
+    final mediaQuery = MediaQuery.of(context);
+
+    final appBar = AppBar(
+      title: Text('Personal Expenses'),
+
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(Icons.add),
+          onPressed: () {
+            _startAddNewTransaction(context);
+          },
+        ),
+      ],
+    );
+
+    final txListWidget = Container(
+      height:
+          (mediaQuery.size.height -
+              appBar.preferredSize.height -
+              mediaQuery.padding.top) *
+          0.7,
+      child: TransactionList(_userTransactions, _deleteTransaction),
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Personal Expenses'),
-
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.add),
-            onPressed: () {
-              _startAddNewTransaction(context);
-            },
-          ),
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Chart(_recentTransactions),
-            TransactionList(_userTransactions, _deleteTransaction),
+            if (isLandscape) //  <==== if(isLandscape) its future from dart it check if true show in the list if no element added
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text('Show Chart '),
+                  Switch(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            if (!isLandscape) // <==== if(isLandscape) its future from dart it check if true show in the list if no element added
+              Container(
+                height:
+                    (mediaQuery.size.height -
+                        appBar.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.3,
+                child: Chart(_recentTransactions),
+              ),
+            if (!isLandscape) txListWidget,
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      height:
+                          (mediaQuery.size.height - //<===total screen height
+                              appBar
+                                  .preferredSize
+                                  .height - //<===height of the app bar
+                              mediaQuery.padding.top) *
+                          0.7, //<===top padding (usually the status bar height).
+                      // this gives you a height = 30% of the free space on the screen (after removing the AppBar + top system bar).
+                      child: Chart(_recentTransactions),
+                    )
+                  : txListWidget,
           ],
         ),
       ),

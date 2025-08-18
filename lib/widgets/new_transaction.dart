@@ -18,7 +18,7 @@ class _NewTransactionState extends State<NewTransaction> {
 
   void _submitData() {
     if (_amountController.text.isEmpty) {
-      return; // If the amount field is empty, do nothing
+      return; // If the  amount field is empty, do nothing
     }
     final enteredTitle = _titleController.text;
     final enteredAmount = double.parse(_amountController.text);
@@ -61,58 +61,71 @@ class _NewTransactionState extends State<NewTransaction> {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      elevation: 5,
-      child: Container(
-        padding: EdgeInsets.all(10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
-          children: <Widget>[
-            TextField(
-              decoration: InputDecoration(labelText: 'Title'),
-              controller: _titleController,
-            ),
-            TextField(
-              decoration: InputDecoration(labelText: 'Amount'),
-              controller: _amountController,
-              keyboardType: TextInputType.number,
-              onSubmitted: (_) => _submitData,
-            ),
-            Container(
-              height: 70,
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      _selectedDate == null
-                          ? 'No Date Chosen!'
-                          : 'Picked Date : ${DateFormat.yMd().format(_selectedDate!)}',
-                      // The ! tells Dart: “I’m sure _selectedDate is not null here” (safe because you already checked _selectedDate == null ?
-                    ),
-                  ),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      foregroundColor: Theme.of(context).primaryColor,
-                    ),
-                    onPressed: _presentDatePicker,
-                    child: Text(
-                      'Choose Date',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
+    return SingleChildScrollView(
+      child: Card(
+        elevation: 5,
+        child: Container(
+          padding: EdgeInsets.only(
+            top: 10,
+            left: 10,
+            right: 10,
+            bottom:
+                MediaQuery.of(context).viewInsets.bottom +
+                10, // <== This moves your content above the keyboard and gives a little breathing room (10 pixels).
+            // Without this, your content could be obstructed by the keyboard when it appears
+            // So MediaQuery.of(context).viewInsets.bottom dynamically gives you how much space at the bottom is taken up by the keyboard.
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: <Widget>[
+              TextField(
+                decoration: InputDecoration(labelText: 'Title'),
+                controller: _titleController,
               ),
-            ),
-            ElevatedButton(
-              style: TextButton.styleFrom(
-                // Theme.of(context).textTheme.labelLarge can be null, because labelLarge is an optional property
-                foregroundColor: Theme.of(context).textTheme.labelLarge?.color,
-                backgroundColor: Theme.of(context).primaryColor,
+              TextField(
+                decoration: InputDecoration(labelText: 'Amount'),
+                controller: _amountController,
+                keyboardType: TextInputType.number,
+                onSubmitted: (_) => _submitData,
               ),
-              onPressed: _submitData,
-              child: Text('Add Transaction'),
-            ),
-          ],
+              Container(
+                height: 70,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        _selectedDate == null
+                            ? 'No Date Chosen!'
+                            : 'Picked Date : ${DateFormat.yMd().format(_selectedDate!)}',
+                        // The ! tells Dart: “I’m sure _selectedDate is not null here” (safe because you already checked _selectedDate == null ?
+                      ),
+                    ),
+                    TextButton(
+                      style: TextButton.styleFrom(
+                        foregroundColor: Theme.of(context).primaryColor,
+                      ),
+                      onPressed: _presentDatePicker,
+                      child: Text(
+                        'Choose Date',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ElevatedButton(
+                style: TextButton.styleFrom(
+                  // Theme.of(context).textTheme.labelLarge can be null, because labelLarge is an optional property
+                  foregroundColor: Theme.of(
+                    context,
+                  ).textTheme.labelLarge?.color,
+                  backgroundColor: Theme.of(context).primaryColor,
+                ),
+                onPressed: _submitData,
+                child: Text('Add Transaction'),
+              ),
+            ],
+          ),
         ),
       ),
     );
