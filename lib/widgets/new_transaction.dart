@@ -4,10 +4,15 @@ import 'package:intl/intl.dart';
 class NewTransaction extends StatefulWidget {
   final Function addTx;
 
-  NewTransaction(this.addTx);
+  NewTransaction(this.addTx) {
+    print('NewTransaction constructor');
+  }
 
   @override
-  State<NewTransaction> createState() => _NewTransactionState();
+  State<NewTransaction> createState() {
+    print('createState() NewTransaction widget ');
+    return _NewTransactionState();
+  }
 }
 
 // your State already has access to context
@@ -15,6 +20,30 @@ class _NewTransactionState extends State<NewTransaction> {
   final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
+
+  _NewTransactionState() {
+    print('Constructor NewTransaction State');
+  }
+  @override
+  void initState() {
+    print('initstate()');
+
+    super.initState();
+  }
+
+  @override
+  void didUpdateWidget(covariant NewTransaction oldWidget) {
+    print('didUpdateWidget()');
+    // This method is called when the widget configuration changes.
+    // For example, if the parent widget rebuilds and passes new parameters to this widget.
+    super.didUpdateWidget(oldWidget);
+  }
+
+  @override
+  void dispose() {
+    print('dispose()');
+    super.dispose();
+  }
 
   void _submitData() {
     if (_amountController.text.isEmpty) {
@@ -131,3 +160,84 @@ class _NewTransactionState extends State<NewTransaction> {
     );
   }
 }
+
+
+
+
+
+//**************Widget Lifecycle *
+// |) Creation phase:
+
+// 1) NewTransaction() constructor
+
+// Called when you create the widget in the tree.
+
+// Immutable configuration is passed in (e.g. addTx).
+
+// Runs once.
+
+
+//2)createState()
+
+// Called right after the widget is created.
+
+// Returns an instance of _NewTransactionState.
+
+// Runs once per widget’s lifetime.
+
+
+// 3)_NewTransactionState constructor
+
+// This is just the constructor of your state class.
+
+// Runs once.
+
+
+// 4)initState()
+
+// Called once when the State object is inserted into the widget tree.
+
+// Perfect for initialization: fetching data, setting up listeners, animations.
+
+// You must call super.initState() at the end.
+
+
+// 5)build()
+
+// Called immediately after initState().
+
+// Describes what the UI should look like.
+
+// Runs many times (every rebuild).
+
+
+// ||)Update phase (when parent rebuilds)
+// 1)didUpdateWidget(oldWidget)
+
+// Called when the parent rebuilds and gives this widget a new configuration.
+
+// Example: parent passes a new function, or new props.
+
+// State is preserved, but the widget data is updated.
+
+// Useful if you need to compare old vs new widget values.
+
+// 2)build() again
+
+// Every time setState() is called in your widget OR the parent rebuilds → build() runs again.
+
+// setState() doesn’t recreate the State object — it just re-runs build.
+
+// |||)Destruction phase
+
+// 1)dispose()
+
+// Called when the widget is removed from the tree permanently.
+
+// Perfect for cleaning up:
+
+// Close streams
+
+// Remove listeners
+
+// Dispose controllers (TextEditingController, AnimationController)

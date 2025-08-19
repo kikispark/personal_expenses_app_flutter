@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../models/transaction.dart';
-import 'package:intl/intl.dart';
+import 'transaction_item.dart';
 
 class TransactionList extends StatelessWidget {
   final List<Transaction> transactions;
@@ -9,6 +9,8 @@ class TransactionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('build () TrasactionList');
+
     // ==>context:metadata object with some information about the widget and its position in the tree
     final theme = Theme.of(context);
     return transactions.isEmpty
@@ -34,6 +36,7 @@ class TransactionList extends StatelessWidget {
           )
         : ListView.builder(
             itemBuilder: (ctx, index) {
+              //=====>listView :Builds only the visible items and a few extra for smooth scrolling.Much better for performance with long lists.
               // ListTile:
 
               // leading → left side widget
@@ -46,51 +49,9 @@ class TransactionList extends StatelessWidget {
 
               // onTap → callback when the tile is tapped
               // the ListView have an infinite height
-              return Card(
-                elevation: 5,
-                margin: EdgeInsets.symmetric(vertical: 8, horizontal: 5),
-                child: ListTile(
-                  leading: CircleAvatar(
-                    radius: 30,
-                    // FittedBox takes a child widget and scales it up or down so it fits inside the FittedBox’s own constraints.so items shrink a bit
-                    child: Padding(
-                      padding: const EdgeInsets.all(6),
-                      child: FittedBox(
-                        child: Text('\$${transactions[index].amount}'),
-                      ),
-                    ),
-                  ),
-                  title: Text(
-                    transactions[index].title,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  subtitle: Text(
-                    DateFormat.yMMMd().format(transactions[index].date),
-                  ),
-                  trailing: MediaQuery.of(context).size.width > 460
-                      ? TextButton.icon(
-                          icon: Icon(
-                            Icons.delete,
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                          label: Text(
-                            'Delete',
-                            style: TextStyle(
-                              color: Theme.of(context).colorScheme.error,
-                            ),
-                          ),
-                          onPressed: () {},
-                        )
-                      : IconButton(
-                          icon: Icon(Icons.delete),
-                          color: Theme.of(
-                            context,
-                          ).colorScheme.error, // <-- use colorScheme.error
-                          onPressed: () {
-                            deleteTransaction(transactions[index].id);
-                          },
-                        ),
-                ),
+              return TransactionItem(
+                transaction: transactions[index],
+                deleteTransaction: deleteTransaction,
               );
             },
             itemCount: transactions.length,

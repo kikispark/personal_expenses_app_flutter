@@ -53,7 +53,7 @@ class Chart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // print(groupedTransactionValues);
-
+    print('build () Chart');
     return Card(
       elevation: 6,
       margin: EdgeInsets.all(20),
@@ -72,7 +72,7 @@ class Chart extends StatelessWidget {
                 totalSpending == 0.0
                     ? 0.0
                     : (data['amount'] as double) / totalSpending,
-              ),
+              )
             );
           }).toList(),
         ),
